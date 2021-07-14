@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import tmdb from '../axios';
+import tmdb from '../apis/tmdb';
 import './Row.css';
 
-const Row = ({ title, fetchUrl }) => {
+const base_url = 'https://image.tmdb.org/t/p/original';
+
+const Row = ({ title, fetchUrl, isLargeRow }) => {
   const [movies, setMovies] = useState([]);
 
   // Run once when the row loads, and don't run again.
@@ -16,13 +18,16 @@ const Row = ({ title, fetchUrl }) => {
     fetchData();
   }, [fetchUrl]);
 
-  console.log(movies);
+  // console.log(movies);
 
+  // poser_path looks like "/2ST6l4WP7ZfqAetuttBqx8F3AAH.jpg", and that's not a complete url. We need to append that to the base_url.
   const renderedMovies = movies.map((movie) => {
     return (
       <img
-        className="row_poster"
-        src={movie.poster_path}
+        className={`row__poster ${isLargeRow && 'row__posterLarge'}`}
+        src={`${base_url}${
+          isLargeRow ? movie.poster_path : movie.backdrop_path
+        }`}
         alt={movie.name}
         key={movie.id}
       />
@@ -32,7 +37,7 @@ const Row = ({ title, fetchUrl }) => {
   return (
     <div className="row">
       <h2>{title}</h2>
-      <div className="row_posters">{renderedMovies}</div>
+      <div className="row__posters">{renderedMovies}</div>
     </div>
   );
 };
